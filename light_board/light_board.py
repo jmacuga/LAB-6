@@ -12,8 +12,8 @@ class TextNotFoundError(Exception):
 
 class LightBoard:
     def __init__(self, serial_num: int, width: int, height: int, letter_width: int, letter_height: int, texts=[]):
-        self.__validate_arguments(serial_num,
-                                  width, height, letter_width, letter_height)
+        self.validate_arguments(serial_num,
+                                width, height, letter_width, letter_height)
         self._serial_num = serial_num
         self._width = width
         self._height = height
@@ -54,33 +54,53 @@ class LightBoard:
         if point[0] > self._width or point[1] > self._height:
             raise ValueError(
                 f'Point ({point[0]},{point[1]}) is not on the board')
-        self._texts.remove(self.get_text(point))
+        try:
+            text = self.get_text_at_start_point(point)
+            self._texts.remove(text)
+            return str(text)
+        except(TextNotFoundError):
+            return ''
+
+    def get_text_at_start_point(self, point: tuple):
+        for text in self._texts:
+            if text.get_start_point() == point:
+                return point
+        raise TextNotFoundError
 
     def get_text(self, point: tuple):
         for text in self._texts:
             end_p = text.end_point(self._letter_width, self._letter_height)
             start_p = text.get_start_point()
-            if start_p[0] <= point[0] <= end_p[0] and start_p[1] <= point[1] <= end_p[1]:
+            if start_p[0] <= point[0] and point[0] <= end_p[0] and start_p[1] <= point[1] and point[1] <= end_p[1]:
                 return text
         raise TextNotFoundError
 
-    def generate_raport(self, prize_per_hour):
-        # której parametrem jest cena wyświetlenia jednego punktu przez jedną godzinę; raport ma zawierać:
-        # datę wygenerowania, numer seryjny tablicy i jej parametry, listę wyświetlanych napisów
-        # gdzie dla każdego napisu podane sa jego parametry (położenie i tekst)
-        # oraz zajmowana powierzchnia (w punktach kwadratowych) oraz cena wyświetlenia przez jeden dzień.
-        today = date.today().isoformat()
-        output_str = '{0}\nserial number: {1._serial_num}, width: {1._width}, height: {1._height},' \
-            ' letter width: {1._letter_width}, letter height: {1._letter_height}\nTEXTS:\n'.format(
-                today, self)
-        f'{self._letter_height}\n texts:\n'
-        i = 0
-        for text in self._texts:
-            i += 1
-            output_str += f'{i}. {text}\n'
-        print(output_str)
+    def get_price_per_day(self, price_per_hour):
+        return self.total_points_num() * price_per_hour * 24
 
-    def __validate_arguments(self, serial_num: int,  width: int, height: int, letter_width: int, letter_height: int):
+    def total_points_num(self):
+        return sum([txt.total_points(self._letter_width, self._letter_width)
+                    for txt in self._texts])
+
+    def print_texts(self):
+        out_str = f'texts:\n'
+        for i, text in enumerate(self._texts):
+            out_str += f'{i}. {text}\n'
+        return out_str
+
+    def generate_raport(self, price_per_hour):
+        # powierzchnia
+        # cena na dzień
+        today = date.today().isoformat()
+        board_data_str = '\nserial number: {0._serial_num}, width: {0._width}, height: {0._height},' \
+            ' letter width: {0._letter_width}, letter height: {0._letter_height}\nTEXTS:\n'.format(
+                self)
+        ppd = self.get_price_per_day(price_per_hour)
+        ppd_str = f'Cena za dzień wyświetlania: {ppd}\n'
+        texts = self.print_texts()
+        return today + board_data_str + ppd_str + texts
+
+    def validate_arguments(self, serial_num: int,  width: int, height: int, letter_width: int, letter_height: int):
         if type(width) != int or type(height) != int or type(letter_height) != int or type(letter_width) != int or type(serial_num) != int:
             raise TypeError
         if serial_num < 0:
@@ -120,8 +140,9 @@ class LightBoard:
             raise TextError("Text does not fit in the board")
 
 
-text1 = LightBoardText("texte", (1, 1))
-text2 = LightBoardText("cos", (1, 2))
-text3 = LightBoardText("inny", (6, 2))
-board = LightBoard(11, 10, 10, 1, 1, [text1, text2, text3])
-board.generate_raport(10)
+if __name__ == '__main__':
+    text1 = LightBoardText("texte", (1, 1))
+    text2 = LightBoardText("cos", (1, 2))
+    text3 = LightBoardText("inny", (6, 2))
+    board = LightBoard(11, 10, 10, 1, 1, [text1, text2, text3])
+    print(board.generate_raport(10))

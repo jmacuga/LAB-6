@@ -121,3 +121,19 @@ def test_remove_text():
     assert len(board.get_texts()) == 2
     assert board.get_texts()[0].get_text() == "cos"
     assert board.get_texts()[1].get_text() == "inny"
+
+
+def test_get_text_at_start_point():
+    pass
+
+
+def test_remove_text_outpt_text():
+    pass
+
+
+def test_remove_text_point_outside_the_board():
+    pass
+
+
+def test_remove_text_text_not_found():
+    pass
