@@ -112,18 +112,20 @@ def test_add_text2():
     board.add_text(new_text)
 
 
+def test_get_text_at_start_point():
+    text1 = LightBoardText("texte", (1, 1))
+    board = LightBoard(11, 10, 10, 1, 1, [text1])
+    assert board.get_text_at_start_point((1, 1)).get_text() == 'texte'
+
+
 def test_remove_text():
     text1 = LightBoardText("texte", (1, 1))
-    text2 = LightBoardText("cos", (1, 2))
-    text3 = LightBoardText("inny", (6, 2))
-    board = LightBoard(11, 10, 10, 1, 1, [text1, text2, text3])
-    board.remove_text((2, 1))
-    assert len(board.get_texts()) == 3
-    assert board.get_texts()[0].get_text() == "texte"
-    assert board.get_texts()[1].get_text() == "cos"
+    board = LightBoard(11, 10, 10, 1, 1, [text1])
+    board.remove_text((1, 1))
+    assert len(board.get_texts()) == 0
 
 
-def test_get_text_at_start_point():
+def text_remove_more_texts():
     pass
 
 

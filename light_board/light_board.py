@@ -64,7 +64,7 @@ class LightBoard:
     def get_text_at_start_point(self, point: tuple):
         for text in self._texts:
             if text.get_start_point() == point:
-                return point
+                return text
         raise TextNotFoundError
 
     def get_text(self, point: tuple):

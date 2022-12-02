@@ -25,7 +25,7 @@ class LightBoardText:
 
     def total_points(self, letter_width, letter_height):
         end_point = self.end_point(letter_width, letter_height)
-        return (end_point[0] - self._start_point[0]) * (end_point[1] - self._start_point[1])
+        return (end_point[0] - self._start_point[0] + 1) * (end_point[1] - self._start_point[1] + 1)
 
     def __str__(self):
         return f'text: {self._text}, start point: {self._start_point}'
