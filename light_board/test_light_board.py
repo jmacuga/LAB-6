@@ -118,9 +118,9 @@ def test_remove_text():
     text3 = LightBoardText("inny", (6, 2))
     board = LightBoard(11, 10, 10, 1, 1, [text1, text2, text3])
     board.remove_text((2, 1))
-    assert len(board.get_texts()) == 2
-    assert board.get_texts()[0].get_text() == "cos"
-    assert board.get_texts()[1].get_text() == "inny"
+    assert len(board.get_texts()) == 3
+    assert board.get_texts()[0].get_text() == "texte"
+    assert board.get_texts()[1].get_text() == "cos"
 
 
 def test_get_text_at_start_point():
